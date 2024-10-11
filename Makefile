@@ -13,7 +13,7 @@ LIBS = -lboost_system -lboost_thread
 SRCS = server.cpp
 
 # Output binary
-TARGET = cppserver
+TARGET = server
 
 # Build target
 build:
@@ -25,13 +25,13 @@ clean:
 
 # Kill running cpp server
 kill:
-	sudo pkill cppserver
+	sudo pkill server
 
 # Run the server
 run:
-	sudo ./cppserver
+	sudo ./server
 
 # Run in the background with nohup
 run-bg:
-	sudo nohup ./cppserver &
+	sudo nohup ./server &
 
