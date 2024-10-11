@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jack's Website</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #posts { margin-top: 20px; }
+        .post { border-bottom: 1px solid #ccc; padding: 10px 0; }
+        #postForm { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to My Website!</h1>
+    <p>I'm keeping track of my thoughts here. Feel free to add your own!</p>
+
+    <div id="postForm">
+        <h2>Add a New Thought</h2>
+        <textarea id="postContent" rows="4" cols="50" placeholder="Write your thought here..."></textarea><br><br>
+        <button onclick="addPost()">Submit</button>
+    </div>
+
+    <div id="posts">
+        <h2>Thoughts</h2>
+        <div id="postList"></div>
+    </div>
+
+    <script>
+        function fetchPosts() {
+            fetch('/posts')
+                .then(response => response.text())
+                .then(data => {
+                    const posts = data.trim().split('\n');
+                    const postList = document.getElementById('postList');
+                    postList.innerHTML = '';
+                    posts.reverse().forEach(post => {
+                        const postDiv = document.createElement('div');
+                        postDiv.className = 'post';
+                        postDiv.textContent = post;
+                        postList.appendChild(postDiv);
+                    });
+                });
+        }
+
+        function addPost() {
+            const content = document.getElementById('postContent').value;
+            if (content.trim() === '') {
+                alert('Please enter some text.');
+                return;
+            }
+
+            const params = new URLSearchParams();
+            params.append('post', content);
+
+            fetch('/add_post', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params.toString(),
+            })
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('postContent').value = '';
+                    fetchPosts();
+                } else {
+                    alert('Error submitting post.');
+                }
+            });
+        }
+
+        // Fetch posts when the page loads
+        window.onload = fetchPosts;
+    </script>
+</body>
+</html>
+
